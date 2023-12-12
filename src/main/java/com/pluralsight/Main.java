@@ -2,19 +2,22 @@ package com.pluralsight;
 
 import java.sql.*;
 import java.util.Scanner;
+import org.apache.commons.dbcp2.BasicDataSource;
 
 public class Main {
-    static String url = "jdbc:mysql://localhost:3306/northwind";
-    static String user = "root";
-    static String password = "****";
     static Scanner myScanner = new Scanner(System.in);
     static Connection conn = null;
     static PreparedStatement preparedStatement = null;
     static ResultSet resultSet = null;
+    static BasicDataSource dataSource = new BasicDataSource();
+
 
 
     public static void main(String[] args) {
         String userInput;
+        dataSource.setUrl("jdbc:mysql://localhost:3306/northwind");
+        dataSource.setUsername("root");
+        dataSource.setPassword("****");
         do {
             System.out.println("""
                     What do you want to do?
@@ -45,7 +48,7 @@ public class Main {
 
     public static void displayAllProducts() {
         try {
-            Connection conn = DriverManager.getConnection(url, user, password);
+            Connection conn = dataSource.getConnection();
             PreparedStatement preparedStatement = conn.prepareStatement("SELECT * FROM Products");
             ResultSet resultSet = preparedStatement.executeQuery();
             while (resultSet.next()) {
@@ -86,7 +89,7 @@ public class Main {
 
     public static void displayAllCustomers() {
         try {
-            Connection conn = DriverManager.getConnection(url, user, password);
+            Connection conn = dataSource.getConnection();
             PreparedStatement preparedStatement = conn.prepareStatement("SELECT * FROM Customers ORDER BY Country");
             ResultSet resultSet = preparedStatement.executeQuery();
             while (resultSet.next()) {
@@ -128,7 +131,7 @@ public class Main {
     }
 
     public static void displayAllCategories() {
-        try (Connection conn = DriverManager.getConnection(url, user, password);
+        try (Connection conn = dataSource.getConnection();
              PreparedStatement preparedStatement = conn.prepareStatement("SELECT * FROM Categories");
              ResultSet resultSet = preparedStatement.executeQuery()) {
 
